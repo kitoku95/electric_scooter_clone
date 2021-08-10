@@ -18,6 +18,7 @@ class _ScooterWidgetState extends State<ScooterWidget>
 
   Offset _scooterOffset = const Offset(0, 0);
   Offset _centerTextOffset = const Offset(0, 0);
+  Offset _cardOffset = const Offset(1, -.2);
 
   double _bottomTextPosY = 120;
 
@@ -50,6 +51,7 @@ class _ScooterWidgetState extends State<ScooterWidget>
     if (oldWidget.scooterDragPercent != dragPercent) {
       _scooterOffset = Offset(-.3 * dragPercent, -.3 * dragPercent);
       _bottomTextPosY = 120 + (-200 * dragPercent);
+      _cardOffset = Offset(1 - dragPercent, (1 - dragPercent) * -.2);
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -106,33 +108,53 @@ class _ScooterWidgetState extends State<ScooterWidget>
   }
 
   Widget _buildBottomCard() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        width: double.infinity,
-        height: 90,
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          children: [
-            Container(
-              width: 100,
-              height: 90,
-              decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                      colors: [Colors.blueAccent, Colors.lightBlue],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter),
-              borderRadius: BorderRadius.circular(20)),
-              child: Center(
-                child: ImageIcon(
-                  const AssetImage('assets/images/power.png'),
-                  size: 32,
+    return FractionalTranslation(
+      translation: _cardOffset,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: double.infinity,
+          height: 90,
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(20)),
+          child: Row(
+            children: [
+              Transform.scale(scale: widget.scooterDragPercent,
+              child: Container(
+                width: 100,
+                height: 90,
+                decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                        colors: [Colors.blueAccent, Colors.lightBlue],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter),
+                    borderRadius: BorderRadius.circular(20 + (1 - widget.scooterDragPercent) * (10 * 4))),
+                child: Center(
+                  child: ImageIcon(
+                    const AssetImage('assets/images/power.png'),
+                    size: 32,
+                    color: Colors.white,
+                  ),
                 ),
+              ),),
+              SizedBox(
+                width: 40,
               ),
-            )
-          ],
+              Row(
+                children: [
+                  Text(
+                    'Swipe to off',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Icon(Icons.arrow_forward)
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
